@@ -1,0 +1,8 @@
+yandexGeoProperty:
+ apiKey: 15aaf703-c7c6-4cba-8b5c-5ff7ea891b1a
+ url: https://geocode-maps.yandex.ru/1.x/
+ format: json
+
+
+server:
+ port: 8080
