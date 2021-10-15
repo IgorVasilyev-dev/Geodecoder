@@ -1,42 +1,32 @@
 package by.senla.geolocation.service;
 
-import by.senla.geolocation.model.POJO.Data;
 import by.senla.geolocation.model.GeoData;
+import by.senla.geolocation.model.POJO.Data;
 import by.senla.geolocation.service.api.IGeoConverter;
 import by.senla.geolocation.service.api.IYandexResponseService;
-import by.senla.geolocation.storage.Cache;
-import org.springframework.beans.factory.annotation.Value;
+import by.senla.geolocation.storage.api.ICache;
 
 public class GeoConverterService implements IGeoConverter {
 
-    private final Cache cache;
+    private final ICache cache;
     private final IYandexResponseService yandexResponseService;
 
-    @Value("${yandexGeoProperty.url}")
-    private String url;
-
-    @Value("${yandexGeoProperty.apiKey}")
-    private String apiKey;
-
-    @Value("${yandexGeoProperty.format}")
-    private String format;
-
-    public GeoConverterService(Cache cache, IYandexResponseService yandexResponseService) {
+    public GeoConverterService(ICache cache, IYandexResponseService yandexResponseService) {
         this.cache = cache;
         this.yandexResponseService = yandexResponseService;
     }
 
     /**
      * Метод получения геоданных
-     * Если данных нет в кэше, то обращаетмся к удаленному сервису
-     * @param geoCode - параметр запросса
+     * Если данных нет в кэше, то обращаемся к удаленному сервису
+     * @param geoCode - параметр запроса
      * @return объект GeoData, если удаленный сервис не нашел геоданные, возвращаем null
      */
     @Override
     public GeoData getGeoData(String geoCode) {
         if(this.cache.get(geoCode) == null) {
             String response;
-            Data data = yandexResponseService.getResponse(url + "?apikey=" + apiKey + "&geocode=" + geoCode + "&format=" + format,geoCode);
+            Data data = yandexResponseService.getResponse(geoCode);
             if(data.getResponse().getGeoObjectCollection().getMetaDataProperty().getGeocoderResponseMetaData().getFound() == 0) {
                 return null;
             }
